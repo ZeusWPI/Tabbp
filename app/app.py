@@ -1,4 +1,5 @@
 import json
+import re
 
 from flask import Flask, redirect, url_for, session, jsonify, request
 from flask_oauthlib.client import OAuth, OAuthException
@@ -35,7 +36,13 @@ def zeus_login():
 
 @app.route('/tokens')
 def tokens():
-    tab_query_result = tab_engine.execute('select key from users where name = :1', [session['username']]).first()
+    # Look, I know this is bad
+    # The reason why I did is, is that different databasedrivers (sqlite, mysql, ...)
+    # have different ways to prepare SQL statements, and these are incompatible
+    if not session['username'].isalnum():
+        return 'Username should be alphanumeric'
+
+    tab_query_result = tab_engine.execute("SELECT key FROM users WHERE name = '%s'" % session['username']).first()
     if tab_query_result is None:
         return "Tab user doesn't exist"
     tab_token = tab_query_result[0]
