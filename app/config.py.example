@@ -1,0 +1,7 @@
+from app.app import app
+
+
+app.secret_key = 'super secret key'
+app.config['OAUTH_KEY'] = 'key'
+app.config['OAUTH_SECRET'] = 'value'
+app.config['TAB_DB_URL'] = 'sqlite:///tmp/tab.db'
