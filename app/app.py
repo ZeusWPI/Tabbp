@@ -42,7 +42,7 @@ def tokens():
     if not session['username'].isalnum():
         return 'Username should be alphanumeric'
 
-    tab_query_result = tab_engine.execute("SELECT key FROM users WHERE name = '%s'" % session['username']).first()
+    tab_query_result = tab_engine.execute("SELECT `key` FROM users WHERE name = '%s'" % session['username']).first()
     if tab_query_result is None:
         return "Tab user doesn't exist"
     tab_token = tab_query_result[0]
