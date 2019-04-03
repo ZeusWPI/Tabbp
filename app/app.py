@@ -1,5 +1,6 @@
 import json
 import re
+import urllib.parse
 
 from flask import Flask, redirect, url_for, session, jsonify, request
 from flask_oauthlib.client import OAuth, OAuthException
@@ -51,7 +52,7 @@ def tokens():
 
     data = {'username': session['username'], 'tab_token': tab_token}
     response = jsonify(data)
-    response.set_cookie('X-Auth', json.dumps(data))
+    response.set_cookie('X-Auth', urllib.parse.quote_plus(json.dumps(data)))
     return response
 
 
