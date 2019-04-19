@@ -25,6 +25,9 @@ zeus = oauth.remote_app(
 tab_engine = create_engine(app.config['TAB_DB_URL'], convert_unicode=True)
 tab_metadata = MetaData(bind=tab_engine)
 
+tap_engine = create_engine(app.config['TAP_DB_URL'], convert_unicode=True)
+tap_metadata = MetaData(bind=tap_engine)
+
 
 @app.route('/login')
 def login():
@@ -50,7 +53,14 @@ def tokens():
     if tab_token is None:
         return "Tab user does't have a token"
 
-    data = {'username': session['username'], 'tab_token': tab_token}
+    tap_query_result = tap_engine.execute("SELECT `userkey` FROM users WHERE name = '%s'" % session['username']).first()
+    if tap_query_result is None:
+        return "Tap user doesn't exist"
+    tap_token = tap_query_result[0]
+    if tap_token is None:
+        return "Tap user does't have a token"
+
+    data = {'username': session['username'], 'tab_token': tab_token, 'tap_token': tap_token}
     response = jsonify(data)
     response.set_cookie('X-Auth', urllib.parse.quote_plus(json.dumps(data)))
     return response
