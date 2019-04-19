@@ -40,6 +40,9 @@ def zeus_login():
 
 @app.route('/tokens')
 def tokens():
+    if 'username' not in session:
+        return redirect(url_for("login"))
+
     # Look, I know this is bad
     # The reason why I did is, is that different databasedrivers (sqlite, mysql, ...)
     # have different ways to prepare SQL statements, and these are incompatible
