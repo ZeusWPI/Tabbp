@@ -48,20 +48,20 @@ def tokens():
     # have different ways to prepare SQL statements, and these are incompatible
     if not session['username'].isalnum():
         return 'Username should be alphanumeric'
+    with tab_engine.connect() as tab_connection, tap_engine.connect() as tap_connection:
+        tab_query_result = tab_connection.execute("SELECT `key` FROM users WHERE name = '%s'" % session['username']).first()
+        if tab_query_result is None:
+            return "Tab user doesn't exist"
+        tab_token = tab_query_result[0]
+        if tab_token is None:
+            return "Tab user does't have a token"
 
-    tab_query_result = tab_engine.execute("SELECT `key` FROM users WHERE name = '%s'" % session['username']).first()
-    if tab_query_result is None:
-        return "Tab user doesn't exist"
-    tab_token = tab_query_result[0]
-    if tab_token is None:
-        return "Tab user does't have a token"
-
-    tap_query_result = tap_engine.execute("SELECT `userkey` FROM users WHERE name = '%s'" % session['username']).first()
-    if tap_query_result is None:
-        return "Tap user doesn't exist"
-    tap_token = tap_query_result[0]
-    if tap_token is None:
-        return "Tap user does't have a token"
+        tap_query_result = tap_connection.execute("SELECT `userkey` FROM users WHERE name = '%s'" % session['username']).first()
+        if tap_query_result is None:
+            return "Tap user doesn't exist"
+        tap_token = tap_query_result[0]
+        if tap_token is None:
+            return "Tap user does't have a token"
 
     data = {'username': session['username'], 'tab_token': tab_token, 'tap_token': tap_token}
     response = jsonify(data)
