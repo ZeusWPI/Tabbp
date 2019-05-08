@@ -1,5 +1,4 @@
 import json
-import re
 import urllib.parse
 
 from flask import Flask, redirect, url_for, session, jsonify, request
@@ -22,10 +21,10 @@ zeus = oauth.remote_app(
     authorize_url='https://adams.ugent.be/oauth/oauth2/authorize/'
 )
 
-tab_engine = create_engine(app.config['TAB_DB_URL'], convert_unicode=True)
+tab_engine = create_engine(app.config['TAB_DB_URL'], convert_unicode=True, pool_pre_ping=True)
 tab_metadata = MetaData(bind=tab_engine)
 
-tap_engine = create_engine(app.config['TAP_DB_URL'], convert_unicode=True)
+tap_engine = create_engine(app.config['TAP_DB_URL'], convert_unicode=True, pool_pre_ping=True)
 tap_metadata = MetaData(bind=tap_engine)
 
 
