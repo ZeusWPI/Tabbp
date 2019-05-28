@@ -45,7 +45,8 @@ def tokens():
     # Look, I know this is bad
     # The reason why I did is, is that different databasedrivers (sqlite, mysql, ...)
     # have different ways to prepare SQL statements, and these are incompatible
-    if not session['username'].isalnum():
+    testRegex = re.compile("[a-zA-Z\-_0-9]+")
+    if testRegex.match(session['username']).endpos != len(session['username']):
         return 'Username should be alphanumeric'
     with tab_engine.connect() as tab_connection, tap_engine.connect() as tap_connection:
         tab_query_result = tab_connection.execute("SELECT `key` FROM users WHERE name = '%s'" % session['username']).first()
