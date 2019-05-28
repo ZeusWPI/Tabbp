@@ -47,7 +47,7 @@ def tokens():
     # have different ways to prepare SQL statements, and these are incompatible
     testRegex = re.compile("[a-zA-Z\-_0-9]+")
     if testRegex.match(session['username']).endpos != len(session['username']):
-        return 'Username should be alphanumeric'
+        return 'Username should only contain letters, numbers, - or _'
     with tab_engine.connect() as tab_connection, tap_engine.connect() as tap_connection:
         tab_query_result = tab_connection.execute("SELECT `key` FROM users WHERE name = '%s'" % session['username']).first()
         if tab_query_result is None:
